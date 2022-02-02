@@ -11,6 +11,7 @@
     </appender>
 
     <logger name="com.ivanzap.marvel" level="debug"/>
+    <logger name="org.springframework.web.servlet" level="debug"/>
 
     <root level="info">
         <appender-ref ref="file"/>
