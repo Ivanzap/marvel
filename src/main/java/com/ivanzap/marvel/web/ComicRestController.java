@@ -1,5 +1,6 @@
 package com.ivanzap.marvel.web;
 
+import com.ivanzap.marvel.model.Character;
 import com.ivanzap.marvel.model.Comic;
 import com.ivanzap.marvel.service.ComicService;
 import org.slf4j.Logger;
@@ -63,9 +64,21 @@ public class ComicRestController {
             @RequestParam(required = false) String title,
             @RequestParam Optional<Integer> page,
             @RequestParam(required = false, defaultValue = "ASC") String direction,
-            @RequestParam Optional<String> sortBy
+            @RequestParam Optional<String> sort
     ) {
-        log.info("getAll");
-        return service.getAllPage(title, page, direction, sortBy);
+        log.info("getAllPage title {}, page{}, direction {}, sort {}", title, page, direction, sort);
+        return service.getAllPage(title, page, direction, sort);
+    }
+
+    @GetMapping("/{comicId}/characters")
+    public Page<Character> getAllCharactersPage(
+            @PathVariable int comicId,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam Optional<Integer> page,
+            @RequestParam(required = false, defaultValue = "ASC") String direction,
+            @RequestParam Optional<String> sort
+    ) {
+        log.info("getAllComicsPage comicId {}, name {}, page{}, direction {}, sort {}", comicId, name, page, direction, sort);
+        return service.getAllCharactersPage(comicId, name, page, direction, sort);
     }
 }

@@ -1,10 +1,11 @@
 package com.ivanzap.marvel.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name = "characters")
@@ -19,6 +20,13 @@ public class Character extends AbstractBaseEntity {
     @Column(name = "description")
     @Size(min = 1, max = 255)
     private String description;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "characters_comics",
+            joinColumns = @JoinColumn(name = "character_id"),
+            inverseJoinColumns = @JoinColumn(name = "comic_id"))
+    @JsonIgnore
+    private List<Comic> comics;
 
     public Character() {
     }
@@ -43,6 +51,14 @@ public class Character extends AbstractBaseEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Comic> getComics() {
+        return comics;
+    }
+
+    public void setComics(List<Comic> comics) {
+        this.comics = comics;
     }
 
     @Override
