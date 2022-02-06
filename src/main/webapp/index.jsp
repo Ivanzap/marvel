@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
-<body>
 <ul>
-    <li><a href="characters.jsp">Character</a></li>
+    <li><a href="characters">Characters</a></li>
+    <li><a href="comics">Comics</a></li>
 </ul>
+
+<body>
+
 </body>
+
 </html>

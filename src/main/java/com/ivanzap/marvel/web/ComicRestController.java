@@ -3,6 +3,7 @@ package com.ivanzap.marvel.web;
 import com.ivanzap.marvel.model.Character;
 import com.ivanzap.marvel.model.Comic;
 import com.ivanzap.marvel.service.ComicService;
+import com.ivanzap.marvel.util.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
 
@@ -28,8 +30,9 @@ public class ComicRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Comic> createWithLocation(@RequestBody Comic comic) {
+    public ResponseEntity<Comic> createWithLocation(@Valid @RequestBody Comic comic) {
         log.info("createWithLocation {}", comic);
+        ValidationUtil.checkNew(comic);
         Comic created = service.create(comic);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -39,9 +42,9 @@ public class ComicRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody Comic comic, @PathVariable int id) {
+    public void update(@Valid @RequestBody Comic comic, @PathVariable int id) {
         log.info("update {} with id {}", comic, id);
-        //assureIdConsistent(comic, id);
+        ValidationUtil.assureIdConsistent(comic, id);
         service.update(comic);
     }
 

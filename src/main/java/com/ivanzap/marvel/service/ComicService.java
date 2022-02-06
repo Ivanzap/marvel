@@ -1,10 +1,10 @@
 package com.ivanzap.marvel.service;
 
-import com.ivanzap.marvel.model.AbstractBaseEntity;
 import com.ivanzap.marvel.model.Character;
 import com.ivanzap.marvel.model.Comic;
 import com.ivanzap.marvel.repository.CharacterRepository;
 import com.ivanzap.marvel.repository.ComicRepository;
+import com.ivanzap.marvel.util.exception.ComicNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ComicService {
@@ -28,7 +27,7 @@ public class ComicService {
     }
 
     public Comic get(int id) {
-        return comicRepository.findById(id).orElse(null);
+        return comicRepository.findById(id).orElseThrow(() -> new ComicNotFoundException("" + id));
     }
 
     public Page<Comic> getAllPage(String title, Optional<Integer> page, String direction, Optional<String> sort) {
@@ -50,6 +49,7 @@ public class ComicService {
     }
 
     public void delete(int id) {
+        comicRepository.findById(id).orElseThrow(() -> new ComicNotFoundException("" + id));
         comicRepository.deleteById(id);
     }
 
