@@ -1,11 +1,10 @@
 package com.ivanzap.marvel.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -27,6 +26,12 @@ public class Comic extends AbstractBaseEntity {
     @ManyToMany(mappedBy = "comics")
     @JsonIgnore
     private List<Character> characters;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private Image image;
 
     public Comic(Integer id, String title, String description) {
         super(id);
@@ -59,6 +64,14 @@ public class Comic extends AbstractBaseEntity {
 
     public void setCharacters(List<Character> characters) {
         this.characters = characters;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     @Override

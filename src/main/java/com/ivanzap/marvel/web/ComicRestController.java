@@ -3,6 +3,7 @@ package com.ivanzap.marvel.web;
 import com.ivanzap.marvel.model.Character;
 import com.ivanzap.marvel.model.Comic;
 import com.ivanzap.marvel.service.ComicService;
+import com.ivanzap.marvel.to.ComicTo;
 import com.ivanzap.marvel.util.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +43,10 @@ public class ComicRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Comic comic, @PathVariable int id) {
-        log.info("update {} with id {}", comic, id);
-        ValidationUtil.assureIdConsistent(comic, id);
-        service.update(comic);
+    public void update(@Valid @RequestBody ComicTo comicTo, @PathVariable int id) {
+        log.info("update {} with id {}", comicTo, id);
+        ValidationUtil.assureIdConsistent(comicTo, id);
+        service.updateTo(comicTo, id);
     }
 
     @GetMapping("/{id}")

@@ -1,6 +1,7 @@
 package com.ivanzap.marvel.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.ivanzap.marvel.HasId;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Persistable;
 
@@ -12,7 +13,7 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 @MappedSuperclass
 @Access(AccessType.FIELD)
 @JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE, setterVisibility = NONE)
-public class AbstractBaseEntity implements Persistable<Integer> {
+public class AbstractBaseEntity implements Persistable<Integer>, HasId {
     public static final int START_SEQ = 100000;
 
     @Id

@@ -4,6 +4,7 @@ import com.ivanzap.marvel.model.Character;
 import com.ivanzap.marvel.model.Comic;
 import com.ivanzap.marvel.repository.CharacterRepository;
 import com.ivanzap.marvel.repository.ComicRepository;
+import com.ivanzap.marvel.to.ComicTo;
 import com.ivanzap.marvel.util.exception.ComicNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,10 +21,12 @@ public class ComicService {
 
     private final ComicRepository comicRepository;
     private final CharacterRepository characterRepository;
+    private final ImageService imageService;
 
-    public ComicService(ComicRepository comicRepository, CharacterRepository characterRepository) {
+    public ComicService(ComicRepository comicRepository, CharacterRepository characterRepository, ImageService imageService) {
         this.comicRepository = comicRepository;
         this.characterRepository = characterRepository;
+        this.imageService = imageService;
     }
 
     public Comic get(int id) {
@@ -44,8 +47,30 @@ public class ComicService {
         return comicRepository.save(comic);
     }
 
+    public Comic createTo(ComicTo comicTo) {
+        return save(comicTo, new Comic());
+    }
+
+    private Comic save(ComicTo comicTo, Comic comic) {
+        comic.setTitle(comicTo.getTitle());
+        comic.setDescription(comicTo.getDescription());
+        if (comicTo.getCharacters() != null) {
+            comic.getCharacters().addAll(comicTo.getCharacters());
+        }
+        if (comicTo.getImage() != null) {
+            comic.setImage(imageService.uploadImage(comicTo.getImage()));
+        }
+        return comicRepository.save(comic);
+    }
+
     public void update(Comic comic) {
         comicRepository.save(comic);
+    }
+
+    public void updateTo(ComicTo comicTo, Integer comicId) {
+        Comic comic = new Comic();
+        comic.setId(comicId);
+        save(comicTo, comic);
     }
 
     public void delete(int id) {

@@ -1,6 +1,8 @@
 package com.ivanzap.marvel.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -27,6 +29,12 @@ public class Character extends AbstractBaseEntity {
             inverseJoinColumns = @JoinColumn(name = "comic_id"))
     @JsonIgnore
     private List<Comic> comics;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private Image image;
 
     public Character() {
     }
@@ -68,5 +76,13 @@ public class Character extends AbstractBaseEntity {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 '}';
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 }

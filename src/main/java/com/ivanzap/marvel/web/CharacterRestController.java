@@ -3,6 +3,7 @@ package com.ivanzap.marvel.web;
 import com.ivanzap.marvel.model.Character;
 import com.ivanzap.marvel.model.Comic;
 import com.ivanzap.marvel.service.CharacterService;
+import com.ivanzap.marvel.to.CharacterTo;
 import com.ivanzap.marvel.util.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,10 @@ public class CharacterRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Character> createWithLocation(@Valid @RequestBody Character character) {
-        log.info("createWithLocation {}", character);
-        ValidationUtil.checkNew(character);
-        Character created = service.create(character);
+    public ResponseEntity<Character> createWithLocation(@Valid @RequestBody CharacterTo characterTo) {
+        log.info("createWithLocation {}", characterTo);
+        ValidationUtil.checkNew(characterTo);
+        Character created = service.createTo(characterTo);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
@@ -42,10 +43,10 @@ public class CharacterRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Character character, @PathVariable int id) {
-        log.info("update {} with id {}", character, id);
-        ValidationUtil.assureIdConsistent(character, id);
-        service.update(character);
+    public void update(@Valid @RequestBody CharacterTo characterTo, @PathVariable int id) {
+        log.info("update {} with id {}", characterTo, id);
+        ValidationUtil.assureIdConsistent(characterTo, id);
+        service.updateTo(characterTo, id);
     }
 
     @GetMapping("/{id}")

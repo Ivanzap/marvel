@@ -4,6 +4,7 @@ import com.ivanzap.marvel.model.Character;
 import com.ivanzap.marvel.model.Comic;
 import com.ivanzap.marvel.repository.CharacterRepository;
 import com.ivanzap.marvel.repository.ComicRepository;
+import com.ivanzap.marvel.to.CharacterTo;
 import com.ivanzap.marvel.util.exception.CharacterNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,10 +21,12 @@ public class CharacterService {
 
     private final CharacterRepository characterRepository;
     private final ComicRepository comicRepository;
+    private final ImageService imageService;
 
-    public CharacterService(CharacterRepository characterRepository, ComicRepository comicRepository) {
+    public CharacterService(CharacterRepository characterRepository, ComicRepository comicRepository, ImageService imageService) {
         this.characterRepository = characterRepository;
         this.comicRepository = comicRepository;
+        this.imageService = imageService;
     }
 
     public Character get(int id) {
@@ -47,8 +50,30 @@ public class CharacterService {
         return characterRepository.save(character);
     }
 
+    public Character createTo(CharacterTo characterTo) {
+        return save(characterTo, new Character());
+    }
+
+    private Character save(CharacterTo characterTo, Character character) {
+        character.setName(characterTo.getName());
+        character.setDescription(characterTo.getDescription());
+        if (characterTo.getComics() != null) {
+            character.getComics().addAll(characterTo.getComics());
+        }
+        if (characterTo.getImage() != null) {
+            character.setImage(imageService.uploadImage(characterTo.getImage()));
+        }
+        return characterRepository.save(character);
+    }
+
     public void update(Character character) {
         characterRepository.save(character);
+    }
+
+    public void updateTo(CharacterTo characterTo, Integer characterId) {
+        Character character = new Character();
+        character.setId(characterId);
+        save(characterTo, character);
     }
 
     public void delete(int id) {
