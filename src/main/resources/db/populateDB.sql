@@ -4,13 +4,13 @@ ALTER SEQUENCE GLOBAL_SEQ RESTART WITH 100000;
 INSERT INTO CHARACTERS(name, description)
 VALUES ('SPIDER-MAN', 'WEB'),
        ('VENOM', 'BLACK MESA'),
-       ('BAD', 'BAD DICR'),
+       ('BAD MAN', 'BAD DICR'),
        ('VAGNUM', 'PIST'),
        ('TERROR', 'MILL'),
        ('PACKMAN', 'GAME'),
        ('DEADPOOL', 'FILM Film'),
        ('WINDOW', 'Microsoft'),
-       ('PALAC', 'HZ'),
+       ('NEW SPIDER-MAN', 'NEW WEB'),
        ('NEMO', 'Capitan');
 
 INSERT INTO COMICS(title, description)

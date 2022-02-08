@@ -7,6 +7,14 @@
 
     <mvc:annotation-driven/>
 
-    <context:component-scan base-package="com.ivanzap.marvel.web"/>
+    <mvc:default-servlet-handler/>
+    <bean id="swagger2Config" class="com.ivanzap.marvel.configuration.SwaggerConfig"/>
+    <mvc:resources order="1" location="classpath:/META-INF/resources/" mapping="/resources/**" />
+    <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/" />
+    <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/" />
 
+    <context:component-scan base-package="com.ivanzap.marvel.web">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+        <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+    </context:component-scan>
 </beans>

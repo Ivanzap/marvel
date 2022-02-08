@@ -1,11 +1,9 @@
 package com.ivanzap.marvel.to;
 
-import com.ivanzap.marvel.model.Character;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 public class ComicTo extends BaseTo {
 
@@ -17,17 +15,14 @@ public class ComicTo extends BaseTo {
     @Size(min = 1, max = 255)
     private String description;
 
-    private List<Character> characters;
-
     private MultipartFile image;
 
     public ComicTo() {
     }
 
-    public ComicTo(String title, String description, List<Character> characters, MultipartFile image) {
+    public ComicTo(String title, String description, MultipartFile image) {
         this.title = title;
         this.description = description;
-        this.characters = characters;
         this.image = image;
     }
 
@@ -45,14 +40,6 @@ public class ComicTo extends BaseTo {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public List<Character> getCharacters() {
-        return characters;
-    }
-
-    public void setCharacters(List<Character> characters) {
-        this.characters = characters;
     }
 
     public MultipartFile getImage() {

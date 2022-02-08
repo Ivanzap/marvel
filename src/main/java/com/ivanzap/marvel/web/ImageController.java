@@ -5,6 +5,7 @@ import com.ivanzap.marvel.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,13 +19,13 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PostMapping("/uploadImage")
+    @PostMapping(value = "/uploadImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Image uploadImage(@RequestParam("image") MultipartFile image) {
         log.info("uploadImage {}", image);
         return imageService.uploadImage(image);
     }
 
-    @GetMapping("show/{image_id}")
+    @GetMapping(value = "show/{image_id}")
     public Resource showImage(@PathVariable("image_id") Integer imageId) {
         log.info("show {}", imageId);
         return imageService.showImage(imageId);

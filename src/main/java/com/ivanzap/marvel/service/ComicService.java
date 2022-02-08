@@ -54,9 +54,6 @@ public class ComicService {
     private Comic save(ComicTo comicTo, Comic comic) {
         comic.setTitle(comicTo.getTitle());
         comic.setDescription(comicTo.getDescription());
-        if (comicTo.getCharacters() != null) {
-            comic.getCharacters().addAll(comicTo.getCharacters());
-        }
         if (comicTo.getImage() != null) {
             comic.setImage(imageService.uploadImage(comicTo.getImage()));
         }
@@ -80,7 +77,6 @@ public class ComicService {
 
     @Transactional
     public Page<Character> getAllCharactersPage(int comicId, String name, Optional<Integer> page, String direction, Optional<String> sort) {
-        name = name != null ? name : "";
         direction = direction.equalsIgnoreCase("desc") ? direction : "ASC";
         List<Integer> charactersId = comicRepository.getAllCharacters(comicId, name);
         Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.Direction.fromString(direction), sort.orElse("id"));
