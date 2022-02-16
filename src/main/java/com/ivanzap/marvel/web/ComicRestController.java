@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -41,10 +40,10 @@ public class ComicRestController {
     @Operation(summary = "Create comic", description = "Create new comic", tags = "Comics")
     @ApiResponse(responseCode = "200", description = "Comic created")
     @ApiResponse(responseCode = "400", description = "Invalid comic parameters")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Comic> createWithLocation(
-            @RequestBody(description = "Created comic object", required = true, content = @Content(schema = @Schema(implementation = ComicTo.class)))
-            @Valid @ModelAttribute ComicTo comicTo) {
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Created comic object", required = true, content = @Content(schema = @Schema(implementation = ComicTo.class)))
+            @Valid @RequestBody ComicTo comicTo) {
         log.info("createWithLocation {}", comicTo);
         ValidationUtil.checkNew(comicTo);
         Comic created = service.createTo(comicTo);
@@ -58,11 +57,11 @@ public class ComicRestController {
     @ApiResponse(responseCode = "204", description = "Comic updated")
     @ApiResponse(responseCode = "400", description = "Invalid comic parameters")
     @ApiResponse(responseCode = "404", description = "Comic not found by id")
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(
-            @RequestBody(description = "Created comic", required = true, content = @Content(schema = @Schema(implementation = ComicTo.class)))
-            @Valid @ModelAttribute ComicTo comicTo,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Created comic", required = true, content = @Content(schema = @Schema(implementation = ComicTo.class)))
+            @Valid @RequestBody ComicTo comicTo,
             @Parameter(description = "Comic id from url", example = "100015")
             @PathVariable int id) {
         log.info("update {} with id {}", comicTo, id);

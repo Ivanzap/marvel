@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -41,10 +40,10 @@ public class CharacterRestController {
     @Operation(summary = "Create character", description = "Create new character", tags = "Characters")
     @ApiResponse(responseCode = "200", description = "Character created")
     @ApiResponse(responseCode = "400", description = "Invalid character parameters")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Character> createWithLocation(
-            @RequestBody(description = "Created character object", required = true, content = @Content(schema = @Schema(implementation = CharacterTo.class)))
-            @Valid @ModelAttribute CharacterTo characterTo) {
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Created character object", required = true, content = @Content(schema = @Schema(implementation = CharacterTo.class)))
+            @Valid @RequestBody CharacterTo characterTo) {
         log.info("createWithLocation {}", characterTo);
         ValidationUtil.checkNew(characterTo);
         Character created = service.createTo(characterTo);
@@ -58,11 +57,11 @@ public class CharacterRestController {
     @ApiResponse(responseCode = "204", description = "Character updated")
     @ApiResponse(responseCode = "400", description = "Invalid character parameters")
     @ApiResponse(responseCode = "404", description = "Character not found by id")
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(
-            @RequestBody(description = "Created character", required = true, content = @Content(schema = @Schema(implementation = CharacterTo.class)))
-            @Valid @ModelAttribute CharacterTo characterTo,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Created character", required = true, content = @Content(schema = @Schema(implementation = CharacterTo.class)))
+            @Valid @RequestBody CharacterTo characterTo,
             @Parameter(description = "Character id from url", example = "100001")
             @PathVariable int id) {
         log.info("update {} with id {}", characterTo, id);
