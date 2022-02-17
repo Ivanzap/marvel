@@ -73,6 +73,7 @@ public class CharacterService {
         save(characterTo, character);
     }
 
+    @Transactional
     public void delete(int id) {
         characterRepository.findById(id).orElseThrow(() -> new CharacterNotFoundException("" + id));
         characterRepository.deleteById(id);

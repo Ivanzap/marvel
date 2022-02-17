@@ -70,6 +70,7 @@ public class ComicService {
         save(comicTo, comic);
     }
 
+    @Transactional
     public void delete(int id) {
         comicRepository.findById(id).orElseThrow(() -> new ComicNotFoundException("" + id));
         comicRepository.deleteById(id);

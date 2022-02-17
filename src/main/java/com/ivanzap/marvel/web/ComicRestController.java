@@ -17,13 +17,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
 
+@Validated
 @Tag(name = "Comics", description = "The comics API")
 @RestController
 @RequestMapping(value = ComicRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -126,5 +129,11 @@ public class ComicRestController {
     ) {
         log.info("getAllComicsPage comicId {}, name {}, page{}, direction {}, sort {}", comicId, name, page, direction, sort);
         return service.getAllCharactersPage(comicId, name, page, direction, sort);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

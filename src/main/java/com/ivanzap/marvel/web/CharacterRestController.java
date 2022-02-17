@@ -26,6 +26,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
 
+@Validated
 @Tag(name = "Characters", description = "The characters API")
 @RestController
 @RequestMapping(value = CharacterRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -128,6 +129,12 @@ public class CharacterRestController {
     ) {
         log.info("getAllComicsPage characterId {}, title {}, page{}, direction {}, sort {}", characterId, title, page, direction, sort);
         return service.getAllComicsPage(characterId, title, page, direction, sort);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
 
