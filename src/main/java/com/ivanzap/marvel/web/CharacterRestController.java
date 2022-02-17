@@ -4,7 +4,7 @@ import com.ivanzap.marvel.model.Character;
 import com.ivanzap.marvel.model.Comic;
 import com.ivanzap.marvel.service.CharacterService;
 import com.ivanzap.marvel.to.CharacterTo;
-import com.ivanzap.marvel.util.ValidationUtil;
+import com.ivanzap.marvel.util.validation.ValidationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

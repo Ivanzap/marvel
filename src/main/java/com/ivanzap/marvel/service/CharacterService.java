@@ -6,6 +6,7 @@ import com.ivanzap.marvel.repository.CharacterRepository;
 import com.ivanzap.marvel.repository.ComicRepository;
 import com.ivanzap.marvel.to.CharacterTo;
 import com.ivanzap.marvel.util.exception.CharacterNotFoundException;
+import com.ivanzap.marvel.util.validation.ValidationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +39,7 @@ public class CharacterService {
         Pageable pageable = PageRequest.of(page.orElse(0),
                 5,
                 Sort.Direction.fromString(direction),
-                sort.orElse("id"));
+                ValidationUtil.checkSortCharacter(sort.orElse("id").toLowerCase()));
         if (name == null) {
             return characterRepository.findAll(pageable);
         } else {
@@ -83,7 +84,7 @@ public class CharacterService {
     public Page<Comic> getAllComicsPage(int characterId, String title, Optional<Integer> page, String direction, Optional<String> sort) {
         direction = direction.equalsIgnoreCase("desc") ? direction : "ASC";
         List<Integer> comicsId = characterRepository.getAllComics(characterId, title);
-        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.Direction.fromString(direction), sort.orElse("id"));
+        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.Direction.fromString(direction), ValidationUtil.checkSortComic(sort.orElse("id").toLowerCase()));
         return comicRepository.findByIdIn(comicsId, pageable);
     }
 }

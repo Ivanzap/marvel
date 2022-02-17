@@ -1,4 +1,4 @@
-package com.ivanzap.marvel.util;
+package com.ivanzap.marvel.util.validation;
 
 import com.ivanzap.marvel.HasId;
 
@@ -17,4 +17,19 @@ public class ValidationUtil {
         }
     }
 
+    public static String checkSortCharacter(String sort) {
+        if(sort.equals("name") || sort.equals("description")) {
+            return sort;
+        } else {
+            return "id";
+        }
+    }
+
+    public static String checkSortComic(String sort) {
+        if(sort.equalsIgnoreCase("title") || sort.equalsIgnoreCase("description")) {
+            return sort;
+        } else {
+            return "id";
+        }
+    }
 }

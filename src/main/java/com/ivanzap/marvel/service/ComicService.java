@@ -6,6 +6,7 @@ import com.ivanzap.marvel.repository.CharacterRepository;
 import com.ivanzap.marvel.repository.ComicRepository;
 import com.ivanzap.marvel.to.ComicTo;
 import com.ivanzap.marvel.util.exception.ComicNotFoundException;
+import com.ivanzap.marvel.util.validation.ValidationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +36,7 @@ public class ComicService {
 
     public Page<Comic> getAllPage(String title, Optional<Integer> page, String direction, Optional<String> sort) {
         direction = direction.equalsIgnoreCase("desc") ? direction : "ASC";
-        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.Direction.fromString(direction), sort.orElse("id"));
+        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.Direction.fromString(direction), ValidationUtil.checkSortComic(sort.orElse("id").toLowerCase()));
         if (title == null) {
             return comicRepository.findAll(pageable);
         } else {
@@ -80,7 +81,7 @@ public class ComicService {
     public Page<Character> getAllCharactersPage(int comicId, String name, Optional<Integer> page, String direction, Optional<String> sort) {
         direction = direction.equalsIgnoreCase("desc") ? direction : "ASC";
         List<Integer> charactersId = comicRepository.getAllCharacters(comicId, name);
-        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.Direction.fromString(direction), sort.orElse("id"));
+        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.Direction.fromString(direction), ValidationUtil.checkSortCharacter(sort.orElse("id").toLowerCase()));
         return characterRepository.findByIdIn(charactersId, pageable);
     }
 }
