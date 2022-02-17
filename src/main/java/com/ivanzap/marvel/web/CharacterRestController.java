@@ -17,9 +17,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
@@ -62,7 +64,7 @@ public class CharacterRestController {
     public void update(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Created character", required = true, content = @Content(schema = @Schema(implementation = CharacterTo.class)))
             @Valid @RequestBody CharacterTo characterTo,
-            @Parameter(description = "Character id from url", example = "100001")
+            @Parameter(description = "Character id from url", example = "2")
             @PathVariable int id) {
         log.info("update {} with id {}", characterTo, id);
         ValidationUtil.assureIdConsistent(characterTo, id);
@@ -74,7 +76,7 @@ public class CharacterRestController {
     @ApiResponse(responseCode = "404", description = "Character not found")
     @GetMapping("/{id}")
     public Character get(
-            @Parameter(description = "Character id from url", example = "100001")
+            @Parameter(description = "Character id from url", example = "2")
             @PathVariable int id) {
         log.info("get {}", id);
         return service.get(id);
@@ -86,7 +88,7 @@ public class CharacterRestController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(
-            @Parameter(description = "Character id from url", example = "100001")
+            @Parameter(description = "Character id from url", example = "4")
             @PathVariable int id) {
         log.info("delete {}", id);
         service.delete(id);
@@ -113,7 +115,7 @@ public class CharacterRestController {
     @ApiResponse(responseCode = "200", description = "Comics by character show")
     @GetMapping("/{characterId}/comics")
     public Page<Comic> getAllComicsPage(
-            @Parameter(description = "Character id from url", example = "100001")
+            @Parameter(description = "Character id from url", example = "2")
             @PathVariable int characterId,
             @Parameter(description = "Part comic.title for filter")
             @RequestParam(value = "title", required = false, defaultValue = "") String title,

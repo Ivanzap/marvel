@@ -20,7 +20,7 @@ public class ImageController {
     }
 
     @PostMapping(value = "/uploadImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Image uploadImage(@RequestParam("image") MultipartFile image) {
+    public Image uploadImage(@RequestPart("image") MultipartFile image) {
         log.info("uploadImage {}", image);
         return imageService.uploadImage(image);
     }

@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class Image extends AbstractBaseEntity {
 
     @Column(name = "path")
-    @Size(max = 255)
+    @Size(max = 255, message = "Size of path should be below 255")
     private String path;
 
     public Image() {

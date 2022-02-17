@@ -62,7 +62,7 @@ public class ComicRestController {
     public void update(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Created comic", required = true, content = @Content(schema = @Schema(implementation = ComicTo.class)))
             @Valid @RequestBody ComicTo comicTo,
-            @Parameter(description = "Comic id from url", example = "100015")
+            @Parameter(description = "Comic id from url", example = "6")
             @PathVariable int id) {
         log.info("update {} with id {}", comicTo, id);
         ValidationUtil.assureIdConsistent(comicTo, id);
@@ -74,7 +74,7 @@ public class ComicRestController {
     @ApiResponse(responseCode = "404", description = "Comic not found")
     @GetMapping("/{id}")
     public Comic get(
-            @Parameter(description = "Comic id from url", example = "100015")
+            @Parameter(description = "Comic id from url", example = "6")
             @PathVariable int id) {
         log.info("get {}", id);
         return service.get(id);
@@ -86,7 +86,7 @@ public class ComicRestController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(
-            @Parameter(description = "Comic id from url", example = "100014")
+            @Parameter(description = "Comic id from url", example = "5")
             @PathVariable int id) {
         log.info("delete {}", id);
         service.delete(id);
@@ -113,8 +113,9 @@ public class ComicRestController {
     @ApiResponse(responseCode = "200", description = "Character by comic show")
     @GetMapping("/{comicId}/characters")
     public Page<Character> getAllCharactersPage(
-            @Parameter(description = "Comic id from url", example = "100015")
+            @Parameter(description = "Comic id from url", example = "6")
             @PathVariable int comicId,
+            @Parameter(description = "Part character.name for filter")
             @RequestParam(value = "name", required = false, defaultValue = "") String name,
             @Parameter(description = "Page number for filter")
             @RequestParam(required = false) Optional<Integer> page,

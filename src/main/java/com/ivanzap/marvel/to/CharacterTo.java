@@ -7,12 +7,12 @@ import javax.validation.constraints.Size;
 
 public class CharacterTo extends BaseTo {
 
-    @NotBlank
-    @Size(min = 1, max = 255)
+    @NotBlank(message = "Name should not be blank")
+    @Size(min = 1, max = 255, message = "Name should be between 1 and 255 characters")
     private String name;
 
-    @NotBlank
-    @Size(min = 1, max = 255)
+    @NotBlank(message = "Description should not be blank")
+    @Size(min = 1, max = 255, message = "Description should be between 1 and 255 characters")
     private String description;
 
     private MultipartFile image;

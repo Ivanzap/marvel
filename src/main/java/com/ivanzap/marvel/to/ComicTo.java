@@ -7,12 +7,12 @@ import javax.validation.constraints.Size;
 
 public class ComicTo extends BaseTo {
 
-    @NotBlank
-    @Size(min = 1, max = 255)
+    @NotBlank(message = "Title should not be blank")
+    @Size(min = 1, max = 255, message = "Title should be between 1 and 255 characters")
     private String title;
 
-    @NotBlank
-    @Size(min = 1, max = 255)
+    @NotBlank(message = "Description should not be blank")
+    @Size(min = 1, max = 255, message = "Description should be between 1 and 255 characters")
     private String description;
 
     private MultipartFile image;

@@ -13,14 +13,14 @@ import java.util.List;
 @Table(name = "comics")
 public class Comic extends AbstractBaseEntity {
 
-    @NotBlank
+    @NotBlank(message = "Title should not be blank")
     @Column(name = "title")
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 255, message = "Title should be between 1 and 255 characters")
     private String title;
 
-    @NotBlank
+    @NotBlank(message = "Description should not be blank")
     @Column(name = "description")
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 255, message = "Description should be between 1 and 255 characters")
     private String description;
 
     @ManyToMany(mappedBy = "comics")

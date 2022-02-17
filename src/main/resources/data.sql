@@ -1,6 +1,3 @@
-TRUNCATE SCHEMA PUBLIC AND COMMIT;
-ALTER SEQUENCE GLOBAL_SEQ RESTART WITH 100000;
-
 INSERT INTO CHARACTERS(name, description)
 VALUES ('SPIDER-MAN', 'WEB'),
        ('VENOM', 'BLACK MESA'),
@@ -13,7 +10,7 @@ VALUES ('SPIDER-MAN', 'WEB'),
        ('NEW SPIDER-MAN', 'NEW WEB'),
        ('NEMO', 'Capitan');
 
-INSERT INTO COMICS(title, description)
+INSERT INTO COMICS( title, description)
 VALUES ('Spider-Man 1', 'Comic about Spider-Man'),
        ('Comic 1', 'Comic 1'),
        ('Blade', 'Comic about Blade'),
@@ -22,9 +19,9 @@ VALUES ('Spider-Man 1', 'Comic about Spider-Man'),
        ('Spider-Man 2', 'Comic 2');
 
 INSERT INTO CHARACTERS_COMICS (CHARACTER_ID, COMIC_ID)
-VALUES (100000, 100010),
-       (100000, 100015),
-       (100001, 100015),
-       (100001, 100014),
-       (100001, 100011),
-       (100008, 100014);
+VALUES (1, 1),
+       (1, 6),
+       (2, 6),
+       (2, 5),
+       (2, 2),
+       (7, 5);
