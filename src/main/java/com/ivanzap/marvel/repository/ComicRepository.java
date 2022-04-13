@@ -1,22 +1,96 @@
 package com.ivanzap.marvel.repository;
 
-import com.ivanzap.marvel.model.Character;
+import com.ivanzap.marvel.domain.tables.CharactersComics;
+import com.ivanzap.marvel.domain.tables.Comics;
 import com.ivanzap.marvel.model.Comic;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.SortOrder;
+import org.jooq.exception.DataAccessException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
-public interface ComicRepository extends JpaRepository<Comic, Integer> {
-    Page<Comic> findByTitleContainingIgnoreCase(@Param("title") String title, Pageable pageable);
+public class ComicRepository {
 
-    @Query("select character.id from Comic comic join comic.characters character where comic.id=?1 and upper(character.name) like concat('%', upper(?2), '%')")
-    List<Integer> getAllCharacters(@Param("id") int comicId, @Param("name") String name);
+    private final DSLContext dsl;
 
-    Page<Comic> findByIdIn(@Param("id") List<Integer> id, Pageable pageable);
+    public ComicRepository(DSLContext dsl) {
+        this.dsl = dsl;
+    }
+
+    public Comic findById(int id) {
+        return dsl.selectFrom(Comics.COMICS)
+                .where(Comics.COMICS.ID.eq(id))
+                .fetchAny()
+                .into(Comic.class);
+    }
+
+    public List<Comic> findAll(Condition condition) {
+        return dsl.selectFrom(Comics.COMICS)
+                .where(condition)
+                .fetch()
+                .into(Comic.class);
+    }
+
+    public List<Comic> findAll(int offset, int limit, String direction, String sortField) {
+        return dsl.selectFrom(Comics.COMICS)
+                .orderBy(Comics.COMICS.field(sortField).sort(SortOrder.valueOf(direction)))
+                .limit(limit)
+                .offset(limit * offset)
+                .fetch()
+                .into(Comic.class);
+    }
+
+    public List<Comic> findByTitleContainingIgnoreCase(String title, int offset, int limit, String direction, String sortField) {
+        return dsl.selectFrom(Comics.COMICS)
+                .where(Comics.COMICS.TITLE.likeIgnoreCase("%" + title + "%"))
+                .orderBy(Comics.COMICS.field(sortField).sort(SortOrder.valueOf(direction)))
+                .limit(limit)
+                .offset(limit * offset)
+                .fetch()
+                .into(Comic.class);
+    }
+
+    public List<Comic> findByCharacterId(int characterId, String title, int offset, int limit, String direction, String sortField) {
+        return dsl.select()
+                .from(Comics.COMICS)
+                .join(CharactersComics.CHARACTERS_COMICS).on(Comics.COMICS.ID.eq(CharactersComics.CHARACTERS_COMICS.COMIC_ID))
+                .where(CharactersComics.CHARACTERS_COMICS.CHARACTER_ID.eq(characterId)
+                        .and(Comics.COMICS.TITLE.likeIgnoreCase("%" + title + "%")))
+                .orderBy(Comics.COMICS.field(sortField).sort(SortOrder.valueOf(direction)))
+                .limit(limit)
+                .offset(limit * offset)
+                .fetch()
+                .into(Comic.class);
+    }
+
+    @Transactional
+    public Comic insert(Comic comic) {
+        return dsl.insertInto(Comics.COMICS)
+                .set(dsl.newRecord(Comics.COMICS, comic))
+                .returning()
+                .fetchOptional()
+                .orElseThrow(() -> new DataAccessException("Error inserting entity: " + comic.getId()))
+                .into(Comic.class);
+    }
+
+    @Transactional
+    public void update(Comic comic) {
+        dsl.update(Comics.COMICS)
+                .set(dsl.newRecord(Comics.COMICS, comic))
+                .where(Comics.COMICS.ID.eq(comic.getId()))
+                .returning()
+                .fetchOptional()
+                .orElseThrow(() -> new DataAccessException("Error updating entity: " + comic.getId()))
+                .into(Comic.class);
+    }
+
+    public boolean deleteById(int id) {
+        return dsl.deleteFrom(Comics.COMICS)
+                .where(Comics.COMICS.ID.eq(id))
+                .execute() == 1;
+    }
 }

@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @Validated
@@ -98,7 +98,7 @@ public class ComicRestController {
     @Operation(summary = "Get all comics", description = "Get all comics with pageable", tags = "Comics")
     @ApiResponse(responseCode = "200", description = "Comics show")
     @GetMapping
-    public Page<Comic> getAllPage(
+    public List<Comic> getAllPage(
             @Parameter(description = "Part title for filter")
             @RequestParam(required = false) String title,
             @Parameter(description = "Page number for filter")
@@ -115,8 +115,8 @@ public class ComicRestController {
     @Operation(summary = "Get all characters by comic", description = "Get all characters by comic with pageable", tags = "Comics")
     @ApiResponse(responseCode = "200", description = "Character by comic show")
     @GetMapping("/{comicId}/characters")
-    public Page<Character> getAllCharactersPage(
-            @Parameter(description = "Comic id from url", example = "6")
+    public List<Character> getAllCharactersPage(
+            @Parameter(description = "Comic id from url", example = "5")
             @PathVariable int comicId,
             @Parameter(description = "Part character.name for filter")
             @RequestParam(value = "name", required = false, defaultValue = "") String name,

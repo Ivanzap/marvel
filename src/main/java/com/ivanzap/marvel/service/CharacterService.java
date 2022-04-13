@@ -6,11 +6,6 @@ import com.ivanzap.marvel.repository.CharacterRepository;
 import com.ivanzap.marvel.repository.ComicRepository;
 import com.ivanzap.marvel.to.CharacterTo;
 import com.ivanzap.marvel.util.exception.CharacterNotFoundException;
-import com.ivanzap.marvel.util.validation.ValidationUtil;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,69 +17,74 @@ public class CharacterService {
 
     private final CharacterRepository characterRepository;
     private final ComicRepository comicRepository;
-    private final ImageService imageService;
 
-    public CharacterService(CharacterRepository characterRepository, ComicRepository comicRepository, ImageService imageService) {
+    public CharacterService(CharacterRepository characterRepository, ComicRepository comicRepository) {
         this.characterRepository = characterRepository;
         this.comicRepository = comicRepository;
-        this.imageService = imageService;
     }
 
     public Character get(int id) {
-        return characterRepository.findById(id).orElseThrow(() -> new CharacterNotFoundException("" + id));
-    }
-
-    public Page<Character> getAllPage(String name, Optional<Integer> page, String direction, Optional<String> sort) {
-        direction = direction.equalsIgnoreCase("desc") ? direction : "ASC";
-        Pageable pageable = PageRequest.of(page.orElse(0),
-                5,
-                Sort.Direction.fromString(direction),
-                ValidationUtil.checkSortCharacter(sort.orElse("id").toLowerCase()));
-        if (name == null) {
-            return characterRepository.findAll(pageable);
-        } else {
-            return characterRepository.findByNameContainingIgnoreCase(name, pageable);
+        try {
+            return characterRepository.findById(id);
+        } catch (Exception e) {
+            throw new CharacterNotFoundException("" + id);
         }
     }
 
-    public Character create(Character character) {
-        return characterRepository.save(character);
+    public List<Character> getAllPage(String name, Optional<Integer> page, String direction, Optional<String> sort) {
+        int limit = 5;
+
+        direction = direction.equalsIgnoreCase("desc") ? "DESC" : "ASC";
+
+        List<String> fields = List.of("id", "name", "description");
+        String sortField = sort.orElse("id");
+        if (!fields.contains(sortField)) {
+            sortField = "id";
+        }
+
+        if (name == null) {
+            return characterRepository.findAll(page.orElse(0), limit, direction, sortField);
+        } else {
+            return characterRepository.findByNameContainingIgnoreCase(name, page.orElse(0), limit, direction, sortField);
+        }
     }
 
     public Character createTo(CharacterTo characterTo) {
-        return save(characterTo, new Character());
+        Character character = new Character();
+        save(characterTo, character);
+        return characterRepository.insert(character);
     }
 
-    private Character save(CharacterTo characterTo, Character character) {
+    public void save(CharacterTo characterTo, Character character) {
         character.setName(characterTo.getName());
         character.setDescription(characterTo.getDescription());
-        if (characterTo.getImage() != null) {
-            character.setImage(imageService.uploadImage(characterTo.getImage()));
-        }
-        return characterRepository.save(character);
-    }
-
-    public void update(Character character) {
-        characterRepository.save(character);
     }
 
     public void updateTo(CharacterTo characterTo, Integer characterId) {
         Character character = new Character();
         character.setId(characterId);
         save(characterTo, character);
+        characterRepository.update(character);
     }
 
     @Transactional
     public void delete(int id) {
-        characterRepository.findById(id).orElseThrow(() -> new CharacterNotFoundException("" + id));
+        get(id);
         characterRepository.deleteById(id);
     }
 
     @Transactional
-    public Page<Comic> getAllComicsPage(int characterId, String title, Optional<Integer> page, String direction, Optional<String> sort) {
-        direction = direction.equalsIgnoreCase("desc") ? direction : "ASC";
-        List<Integer> comicsId = characterRepository.getAllComics(characterId, title);
-        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.Direction.fromString(direction), ValidationUtil.checkSortComic(sort.orElse("id").toLowerCase()));
-        return comicRepository.findByIdIn(comicsId, pageable);
+    public List<Comic> getAllComicsPage(int characterId, String title, Optional<Integer> page, String direction, Optional<String> sort) {
+        int limit = 5;
+
+        direction = direction.equalsIgnoreCase("desc") ? "DESC" : "ASC";
+
+        List<String> fields = List.of("id", "title", "description");
+        String sortField = sort.orElse("id");
+        if (!fields.contains(sortField)) {
+            sortField = "id";
+        }
+
+        return comicRepository.findByCharacterId(characterId, title, page.orElse(0), limit, direction, sortField);
     }
 }

@@ -1,40 +1,23 @@
 package com.ivanzap.marvel.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-@Entity
-@Table(name = "characters")
 public class Character extends AbstractBaseEntity {
 
     @NotBlank(message = "Name should not be blank")
-    @Column(name = "name", nullable = false)
     @Size(min = 1, max = 255, message = "Name should be between 1 and 255 characters")
     private String name;
 
     @NotBlank(message = "Description should not be blank")
-    @Column(name = "description")
     @Size(min = 1, max = 255, message = "Description should be between 1 and 255 characters")
     private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "characters_comics",
-            joinColumns = @JoinColumn(name = "character_id"),
-            inverseJoinColumns = @JoinColumn(name = "comic_id"))
     @JsonIgnore
     private List<Comic> comics;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private Image image;
 
     public Character() {
     }
@@ -76,13 +59,5 @@ public class Character extends AbstractBaseEntity {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 '}';
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
     }
 }

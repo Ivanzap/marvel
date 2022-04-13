@@ -6,11 +6,6 @@ import com.ivanzap.marvel.repository.CharacterRepository;
 import com.ivanzap.marvel.repository.ComicRepository;
 import com.ivanzap.marvel.to.ComicTo;
 import com.ivanzap.marvel.util.exception.ComicNotFoundException;
-import com.ivanzap.marvel.util.validation.ValidationUtil;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,66 +17,73 @@ public class ComicService {
 
     private final ComicRepository comicRepository;
     private final CharacterRepository characterRepository;
-    private final ImageService imageService;
 
-    public ComicService(ComicRepository comicRepository, CharacterRepository characterRepository, ImageService imageService) {
+    public ComicService(ComicRepository comicRepository, CharacterRepository characterRepository) {
         this.comicRepository = comicRepository;
         this.characterRepository = characterRepository;
-        this.imageService = imageService;
     }
 
     public Comic get(int id) {
-        return comicRepository.findById(id).orElseThrow(() -> new ComicNotFoundException("" + id));
-    }
-
-    public Page<Comic> getAllPage(String title, Optional<Integer> page, String direction, Optional<String> sort) {
-        direction = direction.equalsIgnoreCase("desc") ? direction : "ASC";
-        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.Direction.fromString(direction), ValidationUtil.checkSortComic(sort.orElse("id").toLowerCase()));
-        if (title == null) {
-            return comicRepository.findAll(pageable);
-        } else {
-            return comicRepository.findByTitleContainingIgnoreCase(title, pageable);
+        try {
+            return comicRepository.findById(id);
+        } catch (Exception e) {
+            throw new ComicNotFoundException("" + id);
         }
     }
 
-    public Comic create(Comic comic) {
-        return comicRepository.save(comic);
+    public List<Comic> getAllPage(String title, Optional<Integer> page, String direction, Optional<String> sort) {
+        int limit = 5;
+
+        direction = direction.equalsIgnoreCase("desc") ? "DESC" : "ASC";
+
+        List<String> fields = List.of("id", "title", "description");
+        String sortField = sort.orElse("id");
+        if (!fields.contains(sortField)) {
+            sortField = "id";
+        }
+
+        if (title == null) {
+            return comicRepository.findAll(page.orElse(0), limit, direction, sortField);
+        } else {
+            return comicRepository.findByTitleContainingIgnoreCase(title, page.orElse(0), limit, direction, sortField);
+        }
     }
 
     public Comic createTo(ComicTo comicTo) {
-        return save(comicTo, new Comic());
+        Comic comic = new Comic();
+        save(comicTo, comic);
+        return comicRepository.insert(comic);
     }
 
-    private Comic save(ComicTo comicTo, Comic comic) {
+    private void save(ComicTo comicTo, Comic comic) {
         comic.setTitle(comicTo.getTitle());
         comic.setDescription(comicTo.getDescription());
-        if (comicTo.getImage() != null) {
-            comic.setImage(imageService.uploadImage(comicTo.getImage()));
-        }
-        return comicRepository.save(comic);
-    }
-
-    public void update(Comic comic) {
-        comicRepository.save(comic);
     }
 
     public void updateTo(ComicTo comicTo, Integer comicId) {
         Comic comic = new Comic();
         comic.setId(comicId);
         save(comicTo, comic);
+        comicRepository.update(comic);
     }
 
     @Transactional
     public void delete(int id) {
-        comicRepository.findById(id).orElseThrow(() -> new ComicNotFoundException("" + id));
+        get(id);
         comicRepository.deleteById(id);
     }
 
-    @Transactional
-    public Page<Character> getAllCharactersPage(int comicId, String name, Optional<Integer> page, String direction, Optional<String> sort) {
-        direction = direction.equalsIgnoreCase("desc") ? direction : "ASC";
-        List<Integer> charactersId = comicRepository.getAllCharacters(comicId, name);
-        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.Direction.fromString(direction), ValidationUtil.checkSortCharacter(sort.orElse("id").toLowerCase()));
-        return characterRepository.findByIdIn(charactersId, pageable);
+    public List<Character> getAllCharactersPage(int comicId, String name, Optional<Integer> page, String direction, Optional<String> sort) {
+        int limit = 5;
+
+        direction = direction.equalsIgnoreCase("desc") ? "DESC" : "ASC";
+
+        List<String> fields = List.of("id", "name", "description");
+        String sortField = sort.orElse("id");
+        if (!fields.contains(sortField)) {
+            sortField = "id";
+        }
+
+        return characterRepository.findByComicId(comicId, name, page.orElse(0), limit, direction, sortField);
     }
 }

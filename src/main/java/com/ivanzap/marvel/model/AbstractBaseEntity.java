@@ -1,22 +1,10 @@
 package com.ivanzap.marvel.model;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ivanzap.marvel.HasId;
-import org.hibernate.Hibernate;
-import org.springframework.data.domain.Persistable;
 
-import javax.persistence.*;
+public class AbstractBaseEntity implements HasId {
 
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
-
-@MappedSuperclass
-@Access(AccessType.FIELD)
-@JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE, setterVisibility = NONE)
-public class AbstractBaseEntity implements Persistable<Integer>, HasId {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
 
     protected AbstractBaseEntity(Integer id) {
@@ -41,6 +29,7 @@ public class AbstractBaseEntity implements Persistable<Integer>, HasId {
         return getClass().getSimpleName() + ":" + id;
     }
 
+    @JsonIgnore
     @Override
     public boolean isNew() {
         return id == null;
@@ -51,7 +40,7 @@ public class AbstractBaseEntity implements Persistable<Integer>, HasId {
         if (this == o) {
             return true;
         }
-        if (o == null || !getClass().equals(Hibernate.getClass(o))) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         AbstractBaseEntity that = (AbstractBaseEntity) o;
